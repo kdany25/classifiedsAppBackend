@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import Mongoose from "mongoose";
+import productRouter from "./routes/product";
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ Mongoose.connect(process.env.MONGO_URL as string)
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
+app.use("/api/product", productRouter);
 
 app.listen(PORT, () => {
 	console.log(`Listening on port ${PORT}`);
