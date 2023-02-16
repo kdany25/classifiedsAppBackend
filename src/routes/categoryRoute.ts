@@ -1,15 +1,15 @@
 import express, { Request, Response } from "express";
-import Product from "../models/product";
-import { BaseProduct } from "../interface/product.interface";
+import Category from "../models/category";
+import { BaseCategory } from "../interface/category.interface";
 
 const router = express.Router();
 
 router.post("/", async (req: Request, res: Response) => {
-	const newProduct = new Product(req.body);
+	const newCategory = new Category(req.body);
 
 	try {
-		const product: BaseProduct = await newProduct.save();
-		res.status(201).json(product);
+		const category: BaseCategory = await newCategory.save();
+		res.status(201).json(category);
 	} catch (err) {
 		res.status(500).json(err);
 	}
@@ -17,8 +17,8 @@ router.post("/", async (req: Request, res: Response) => {
 
 router.delete("/:id", async (req: Request, res: Response) => {
 	try {
-		await Product.findByIdAndDelete(req.params.id as string);
-		res.status(200).json("Product has been deleted...");
+		await Category.findByIdAndDelete(req.params.id as string);
+		res.status(200).json("category has been deleted...");
 	} catch (err) {
 		res.status(500).json(err);
 	}
@@ -26,8 +26,8 @@ router.delete("/:id", async (req: Request, res: Response) => {
 
 router.get("/:id", async (req: Request, res: Response) => {
 	try {
-		const product = await Product.findById(req.params.id as string);
-		res.status(200).json(product);
+		const category = await Category.findById(req.params.id as string);
+		res.status(200).json(category);
 	} catch (err) {
 		res.status(500).json(err);
 	}
@@ -36,11 +36,11 @@ router.get("/:id", async (req: Request, res: Response) => {
 router.get("/", async (req: Request, res: Response) => {
 	const query = req.query.new;
 	try {
-		const products = query
-			? await Product.find().sort({ _id: -1 }).limit(5)
-			: await Product.find();
+		const categories = query
+			? await Category.find().sort({ _id: -1 }).limit(5)
+			: await Category.find();
 
-		res.status(200).json(products);
+		res.status(200).json(categories);
 	} catch (err) {
 		res.status(500).json(err);
 	}
@@ -48,7 +48,7 @@ router.get("/", async (req: Request, res: Response) => {
 
 router.put("/:id", async (req: Request, res: Response) => {
 	try {
-		const updatedProduct = await Product.findByIdAndUpdate(
+		const updatedProduct = await Category.findByIdAndUpdate(
 			req.params.id,
 			{
 				$set: req.body,

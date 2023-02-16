@@ -4,6 +4,7 @@ import cors from "cors";
 import helmet from "helmet";
 import Mongoose from "mongoose";
 import productRouter from "./routes/product";
+import categoryRouter from "./routes/categoryRoute";
 
 dotenv.config();
 
@@ -24,6 +25,7 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 app.use("/api/product", productRouter);
+app.use("/api/category", categoryRouter);
 
 app.listen(PORT, () => {
 	console.log(`Listening on port ${PORT}`);
