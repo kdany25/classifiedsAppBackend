@@ -5,6 +5,7 @@ import CryptoJS from "crypto-js";
 import jwt from "jsonwebtoken";
 
 const router = express.Router();
+const { PASS_SEC = 'dany', JWT_SEC = 'dany' } = process.env;
 
 //REGISTER
 router.post("/register", async (req: Request, res: Response) => {
@@ -15,7 +16,7 @@ router.post("/register", async (req: Request, res: Response) => {
 		phone: req.body.phone,
 		password: CryptoJS.AES.encrypt(
 			req.body.password,
-			process.env.PASS_SEC
+			PASS_SEC
 		).toString(),
 	});
 
@@ -36,8 +37,8 @@ router.post("/login", async (req: Request, res: Response) => {
 		!user && res.status(401).json("invalid credentials");
 
 		const hashedPassword = CryptoJS.AES.decrypt(
-			user.password,
-			process.env.PASS_SEC
+			user?.password,
+			PASS_SEC
 		);
 
 		const originalPassword = hashedPassword.toString(CryptoJS.enc.Utf8);
@@ -52,7 +53,7 @@ router.post("/login", async (req: Request, res: Response) => {
 				id: user._id,
 				isAdmin: user.isAdmin,
 			},
-			process.env.JWT_SEC,
+			JWT_SEC,
 			{ expiresIn: "3d" }
 		);
 

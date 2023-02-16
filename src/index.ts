@@ -8,6 +8,8 @@ import categoryRouter from "./routes/categoryRoute";
 import authRouter from "./routes/authRoute";
 
 dotenv.config();
+const DEFAULT_DB_URL = 'mongodb+srv://kdany:kdany@cluster0.gzlmh.mongodb.net/classfiedsApp?retryWrites=true&w=majority'
+const { MONGO_URL= DEFAULT_DB_URL } = process.env;
 
 if (!process.env.PORT) {
 	process.exit(1);
@@ -16,7 +18,8 @@ if (!process.env.PORT) {
 const PORT: number = parseInt(process.env.PORT as string, 10);
 
 const app = express();
-Mongoose.connect(process.env.MONGO_URL as string)
+
+Mongoose.connect(MONGO_URL as string)
 	.then(() => console.log("DataBase connection successfull"))
 	.catch((err) => {
 		console.log(err);
