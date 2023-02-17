@@ -5,7 +5,7 @@ import CryptoJS from "crypto-js";
 import jwt from "jsonwebtoken";
 
 const router = express.Router();
-const { PASS_SEC = 'dany', JWT_SEC = 'dany' } = process.env;
+const { PASS_SEC = "dany", JWT_SEC = "dany" } = process.env;
 
 //REGISTER
 router.post("/register", async (req: Request, res: Response) => {
@@ -14,10 +14,7 @@ router.post("/register", async (req: Request, res: Response) => {
 		lastName: req.body.lastname,
 		email: req.body.email,
 		phone: req.body.phone,
-		password: CryptoJS.AES.encrypt(
-			req.body.password,
-			PASS_SEC
-		).toString(),
+		password: CryptoJS.AES.encrypt(req.body.password, PASS_SEC).toString(),
 	});
 
 	try {
@@ -33,20 +30,11 @@ router.post("/login", async (req: Request, res: Response) => {
 		const user: any = await User.findOne({
 			email: req.body.email,
 		});
-
-		!user && res.status(401).json("invalid credentials");
-
-		const hashedPassword = CryptoJS.AES.decrypt(
-			user?.password,
-			PASS_SEC
-		);
+		const hashedPassword = CryptoJS.AES.decrypt(user?.password, PASS_SEC);
 
 		const originalPassword = hashedPassword.toString(CryptoJS.enc.Utf8);
 
 		const inputPassword = req.body.password;
-
-		originalPassword != inputPassword &&
-			res.status(401).json("invalid credentials");
 
 		const accessToken = jwt.sign(
 			{
@@ -56,9 +44,12 @@ router.post("/login", async (req: Request, res: Response) => {
 			JWT_SEC,
 			{ expiresIn: "3d" }
 		);
-
-		const { password, ...others } = user._doc;
-		res.status(200).json({ ...others, accessToken });
+		if (!user || originalPassword != inputPassword) {
+			res.status(401).json("invalid credentials");
+		} else {
+			const { password, ...others } = user._doc;
+			res.status(200).json({ ...others, accessToken });
+		}
 	} catch (err) {
 		res.status(500).json(err);
 	}
